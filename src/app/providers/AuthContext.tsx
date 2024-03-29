@@ -56,7 +56,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const login = async (redirectUri: string) => {
     try {
       const authUrl = `https://api.stg.withrotate.com/api/auth/oauth_authorize?redirect_uri=${redirectUri}`;
-      window.location.href = authUrl;
+      if (typeof window !== "undefined") {
+        window.location.href = authUrl;
+      }
     } catch (error) {
       console.error("Error during login:", error);
     }

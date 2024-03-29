@@ -1,25 +1,17 @@
 import { IMAGES, formFeedback } from "@/utils/constants";
-import { useGlobalStore } from "@/store";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { getBase64FromImage } from "@/utils/helpers";
 import { AxiosError, AxiosResponse } from "axios";
 import { apiRoutes, axiosInstance } from "@/api";
-import { useToast } from "@chakra-ui/react";
+import { ToastId, useToast } from "@chakra-ui/react";
 import { OrgData } from "@/types";
 
-export default function useAccountPage() {
-  const [orgData, setOrgData, submitting, setSubmitting] = useGlobalStore(
-    (state) => [
-      state.orgData,
-      state.setOrgData,
-      state.submitting,
-      state.setSubmitting,
-    ],
-  );
+export default function useAccountPage({ orgData }: { orgData: OrgData }) {
   const [uploadedImage, setUploadedImage] = useState<string>("");
   const toast = useToast();
+  const toastIdRef = useRef<ToastId>();
 
   const onImageUpload = async (image: File) => {
     const data = (await getBase64FromImage(image)) as string;
@@ -49,7 +41,10 @@ export default function useAccountPage() {
         companyLogo = uploadedImage;
       }
 
-      setSubmitting(true);
+      toastIdRef.current = toast({
+        status: "loading",
+        description: "Submitting",
+      });
 
       try {
         const result: AxiosResponse<OrgData> = await axiosInstance.put(
@@ -64,23 +59,27 @@ export default function useAccountPage() {
         );
 
         if (result.status === 200) {
-          toast({
-            status: "success",
-            description: "Updated successfully",
-          });
-          setOrgData(result.data);
+          if (toastIdRef.current) {
+            toast.update(toastIdRef.current, {
+              status: "success",
+              description: "Updated successfully",
+            });
+          }
         }
       } catch (err) {
-        const error = err as AxiosError<any>;
-        toast({
+        const error = err as AxiosError<unknown>;
+        if (!toastIdRef.current) {
+          toast.update(toastIdRef.current, {
+            status: "error",
+            description: error?.message,
+          });
+        }
+        toast.update(toastIdRef.current, {
           status: "error",
           description: error?.message,
         });
-      } finally {
-        setSubmitting(false);
       }
     },
-    enableReinitialize: true,
     validationSchema,
   });
 
@@ -98,5 +97,5 @@ export default function useAccountPage() {
     return logo;
   }, [orgData?.profile.company_logo, uploadedImage]);
 
-  return { orgData, formik, showCompanyLogo, onImageUpload, toast, submitting };
+  return { orgData, formik, showCompanyLogo, onImageUpload, toast };
 }

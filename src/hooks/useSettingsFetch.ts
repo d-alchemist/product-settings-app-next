@@ -1,14 +1,19 @@
 import { apiRoutes, axiosInstance } from "@/api";
 import { useGlobalStore } from "@/store";
 import { OrgData, UserData } from "@/types";
-import { AxiosResponse } from "axios";
-import { useEffect } from "react";
+import { useToast } from "@chakra-ui/react";
+import axios, { AxiosResponse } from "axios";
+import { useEffect, useRef } from "react";
 
 export default function useSettingsFetch() {
-  const [setOrgData, setUsers] = useGlobalStore((state) => [
+  const [orgData, userData, setOrgData, setUsers] = useGlobalStore((state) => [
+    state.orgData,
+    state.userData,
     state.setOrgData,
     state.setUsers,
   ]);
+
+  const toast = useToast();
 
   const userDataPromise: Promise<AxiosResponse<UserData[]>> = axiosInstance.get(
     apiRoutes.userManagement,
@@ -17,7 +22,13 @@ export default function useSettingsFetch() {
     apiRoutes.orgManagement,
   );
 
+  const loadRef = useRef(false);
+
   useEffect(() => {
+    const source = axios.CancelToken.source();
+
+    if (loadRef.current) return;
+
     Promise.allSettled([userDataPromise, orgDataPromise])
       .then(async ([userData, orgData]) => {
         if (userData.status === "fulfilled") {
@@ -36,8 +47,19 @@ export default function useSettingsFetch() {
       .catch((errors: Array<PromiseRejectedResult>) => {
         // Handle errors if any
         errors.forEach((error) => {
-          console.error("Error:", error.reason);
+          toast({
+            status: "error",
+            description: error.reason,
+          });
         });
       });
+
+      return () => {
+        source.cancel();
+        loadRef.current = true;
+      };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  return { orgData, userData } as const;
 }

@@ -10,7 +10,7 @@ export default function DashboardLayout({
   return (
     <Box pt="76px">
       <TopNav />
-      <Box maxW="1027px" mx="auto">
+      <Box maxW="1027px" mx="auto" px={{ base: "5", lg: "0" }}>
         {children}
       </Box>
     </Box>

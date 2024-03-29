@@ -1,16 +1,14 @@
 import { getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { columns, data } from "./UserTableColumns";
-import { useGlobalStore } from "@/store";
 import SettingsContainer from "./SettingsContainer";
 import AppTable from "@/app/components/AppTable";
+import { UserData } from "@/types";
 
-export default function UserManagement() {
-  const [users] = useGlobalStore((state) => [state.users]);
-
+export default function UserManagement({ userData }: { userData: UserData[] }) {
   // Remove the comment literals in line 12 to use the dummy data
   const table = useReactTable({
     // data,
-    data: users,
+    data: userData,
     columns,
     getCoreRowModel: getCoreRowModel(),
   })

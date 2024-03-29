@@ -1,8 +1,6 @@
-"use client";
 import { IMAGES } from "@/utils/constants";
 import { Box, Flex, Text } from "@chakra-ui/react";
 import Image from "next/image";
-import { useAuth } from "../providers/AuthContext";
 
 export default function TopNav() {
   return (
@@ -32,7 +30,7 @@ export default function TopNav() {
 const Avatar = () => {
   return (
     <Flex alignItems="center" gap="4">
-      <Flex flexDir="column">
+      <Flex flexDir="column" display={{ base: "none", sm: "flex" }}>
         <Text fontFamily="body" fontWeight="500">Theodore Winters</Text>
         <Text fontFamily="body" fontSize="14">twinters@gmail.com</Text>
       </Flex>

@@ -1,12 +1,12 @@
 import { Box, Divider, Flex, Text } from "@chakra-ui/react";
-import { ReactNode } from "react";
+import { ReactNode, memo } from "react";
 
 type Props = {
   title: string;
   children: ReactNode;
 };
 
-export default function SettingsContainer({ title, children }: Props) {
+function SettingsContainer({ title, children }: Props) {
   return (
     <Flex
       border="1px solid"
@@ -19,7 +19,7 @@ export default function SettingsContainer({ title, children }: Props) {
       flexDir="column"
     >
       <Box w="full">
-        <Text fontFamily="heading" fontWeight="500" fontSize="20px">
+        <Text className="avenir" fontWeight="500" fontSize="20px">
           {title}
         </Text>
         <Divider mt="3" color="#AEADBE" border="0.3px solid" />
@@ -28,3 +28,5 @@ export default function SettingsContainer({ title, children }: Props) {
     </Flex>
   );
 }
+
+export default memo(SettingsContainer);

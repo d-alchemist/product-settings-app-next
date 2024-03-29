@@ -12,21 +12,23 @@ import {
 import SettingsContainer from "./SettingsContainer";
 import Image from "next/image";
 import { ICONS } from "@/utils/constants";
-import LoadingModal from "@/app/components/LoadingModal";
 import useAccountPage from "../hooks/useAccountPage";
+import { OrgData } from "@/types";
+import { memo } from "react";
 
-export default function Account() {
-  const { orgData, formik, showCompanyLogo, onImageUpload, toast, submitting } =
-    useAccountPage();
-
-  if (!orgData) {
-    return <LoadingModal />;
-  }
+function Account({ orgData }: { orgData: OrgData }) {
+  const { formik, showCompanyLogo, onImageUpload, toast } =
+    useAccountPage({ orgData });
 
   return (
     <>
       <SettingsContainer title="Account">
-        <form onSubmit={formik.handleSubmit}>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            formik.handleSubmit(e);
+          }}
+        >
           <Flex flexDir="column" maxW="480px" gap="4" fontFamily="heading">
             {formInput.map((form) => (
               <FormControl key={form.id}>
@@ -152,7 +154,6 @@ export default function Account() {
                 fontSize="10"
                 gap="8"
                 type="submit"
-                isLoading={submitting}
               >
                 Save changes
               </Button>
@@ -163,6 +164,8 @@ export default function Account() {
     </>
   );
 }
+
+export default memo(Account);
 
 const formInput = [
   {

@@ -1,6 +1,6 @@
 # Product Suggestions Page
 
-Live URL: [https://product-suggestions-next.netlify.app/](https://product-suggestions-next.netlify.app/)
+Live URL: [https://product-settings-app-next-jzh7.vercel.app/](https://product-settings-app-next-jzh7.vercel.app/)
 
 ## Prerequisites
 
