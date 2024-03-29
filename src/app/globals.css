@@ -1,0 +1,33 @@
+*,
+*::before,
+*::after {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  font-family: "Open sans";
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background-color: #FBFBFC !important;
+}
+
+.custom_button {
+ background-color: white;
+ border: 1px solid;
+ color: #5E6DFA;
+ border-radius: 30px;
+ font-size: 10px;
+ padding: 6px 15px;
+ font-weight: 400;
+}
+
+.custom_button:hover {
+  background-color: #5E6DFA;
+  color: white;
+}
